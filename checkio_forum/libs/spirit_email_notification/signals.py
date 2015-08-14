@@ -6,8 +6,11 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 
 from spirit.comment.models import Comment
+from spirit.topic.notification.models import TopicNotification
+from huey.djhuey import task
 
 
+@task()
 @receiver(post_save, sender=Comment)
 def send_email_notification(sender, instance, raw, **kwargs):
     quote_url = reverse(
@@ -19,16 +22,16 @@ def send_email_notification(sender, instance, raw, **kwargs):
         'domain': settings.DOMAIN
     }
     body = render_to_string('spirit_email_notification/new_comment.html', body_context)
-    comment_all = Comment.objects.all()
-    email_to_send = set()
-    for comment in comment_all:
-        if instance.topic.id == comment.topic.id:
-            if instance.user != comment.user:
-                email_to_send.add(comment.user.email)
+    comment_all = Comment.objects.filter(topic=instance.topic).exclude(user=instance.user)
+    topic_notification_all = TopicNotification.objects.filter(topic=instance.topic).exclude(is_active=True)
+    email_not_send = {topic.user.email for topic in topic_notification_all}
+    email_to_send = {comment.user.email for comment in comment_all}
+    email_to_send.difference_update(email_not_send)
     for email in email_to_send:
         send_mail(
             'EoC Comment. {}'.format(instance.topic.title),
-            body, settings.DEFAULT_FROM_EMAIL,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
             [email])
 
 
