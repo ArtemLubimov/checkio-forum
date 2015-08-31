@@ -30,12 +30,6 @@ def send_email_notification(sender, instance, raw, **kwargs):
         email_not_send = {topic.user.email for topic in topic_notification_all}
         email_to_send = {comment.user.email for comment in comment_all}
         email_to_send.difference_update(email_not_send)
-        for email in email_to_send:
-            send_mail(
-                'EoC Comment. {}'.format(instance.topic.title),
-                body,
-                settings.DEFAULT_FROM_EMAIL,
-                [email])
     else:
         comment_all = Comment.objects.filter(topic=instance.topic)
         for comment in comment_all:
@@ -53,11 +47,12 @@ def send_email_notification(sender, instance, raw, **kwargs):
         comment_all = Comment.objects.filter(topic=instance.topic).exclude(user=instance.user)
         email_not_send = {comment.user.email for comment in comment_all}
         email_to_send.difference_update(email_not_send)
-        for email in email_to_send:
-            send_mail('EoC Mention. {}'.format(instance.topic.title),
-                      body,
-                      settings.DEFAULT_FROM_EMAIL,
-                      [email])
+    for email in email_to_send:
+        send_mail(
+            'EoC Mention. {}'.format(instance.topic.title),
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [email])
 
 
 
