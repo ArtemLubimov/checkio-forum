@@ -10,7 +10,8 @@ class SocialLoginRedirect(RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return '/social/login/checkio/?' + urllib.urlencode({'next': self.request.GET.get('next', '/')})
+        return '/social/login/checkio/?' + urllib.urlencode(
+            {'next': self.request.GET.get('next', '/')})
 
 
 urlpatterns = patterns(
@@ -23,7 +24,8 @@ urlpatterns = patterns(
 )
 
 
-urlpatterns += patterns('loginas.views',
+urlpatterns += patterns(
+    'loginas.views',
     url(r"^login/user/(?P<user_id>.+)/$", "user_login", name="loginas-user-login"),
 )
 

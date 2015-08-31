@@ -1,7 +1,7 @@
 import os
 
 from .django import BASE_DIR
-from spirit.settings import *
+from spirit.settings import *  # noqa
 
 
 DOMAIN = 'forum.empireofcode.com'
@@ -21,7 +21,6 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 

@@ -55,5 +55,5 @@ target/
 
 media/
 static/
-settings/local.py
+checkio_forum/settings/local.py
 db.sqlite3
